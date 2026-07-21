@@ -6,6 +6,7 @@ const reviewed = document.querySelector("#confirm-reviewed");
 const finalConfirm = document.querySelector("#final-confirm");
 const summary = form.querySelector('textarea[name="summary"]');
 let pendingDispatch = null;
+let pendingIncident = null;
 
 const escapeHTML = (value) =>
   String(value).replace(
@@ -55,13 +56,36 @@ reviewed.addEventListener("change", () => {
 });
 
 dialog.addEventListener("close", () => {
-  if (dialog.returnValue !== "confirm" || !pendingDispatch) return;
-  setStep("confirm");
-  showToast(`${pendingDispatch.ambulance.id} confirmed in demonstration mode.`);
-  toast.classList.add("success");
-  setTimeout(() => toast.classList.remove("success"), 2800);
-  pendingDispatch = null;
+  if (dialog.returnValue !== "confirm" || !pendingDispatch || !pendingIncident)
+    return;
+  confirmDryRunDispatch();
 });
+
+async function confirmDryRunDispatch() {
+  finalConfirm.disabled = true;
+  try {
+    const response = await fetch("/api/dispatch/confirm", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        incidentId: pendingIncident.incidentId,
+        ambulanceId: pendingDispatch.ambulance.id,
+        hospitalId: pendingDispatch.hospital.id,
+        reviewed: true,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Confirmation failed");
+    setStep("confirm");
+    showToast(result.message);
+    toast.classList.add("success");
+    setTimeout(() => toast.classList.remove("success"), 2800);
+    pendingDispatch = null;
+    pendingIncident = null;
+  } catch (error) {
+    showToast(error.message);
+  }
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -87,7 +111,7 @@ form.addEventListener("submit", async (event) => {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Analysis failed");
-    const { ranking, ai, aiStatus } = result;
+    const { incident, ranking, ai, aiStatus, dataMode } = result;
     const reason = escapeHTML(
       ai?.dispatch_rationale || ranking.deterministicReason,
     );
@@ -97,9 +121,10 @@ form.addEventListener("submit", async (event) => {
       "Confirm receiving capacity",
     ];
     pendingDispatch = ranking;
+    pendingIncident = incident;
     recommendation.innerHTML = `
       <div class="recommendation-content">
-        <div class="recommendation-score"><small>Recommended unit</small><strong>${escapeHTML(ranking.ambulance.id)}</strong><small>${ranking.estimatedArrivalMinutes} min ETA · ${aiStatus === "available" ? "AI supported" : "Rules fallback"}</small></div>
+        <div class="recommendation-score"><small>Recommended unit</small><strong>${escapeHTML(ranking.ambulance.id)}</strong><small>${ranking.estimatedArrivalMinutes} min ETA · ${aiStatus === "available" ? "AI supported" : "Rules fallback"} · ${dataMode === "partner" ? "Partner data" : "Demo data"}</small></div>
         <div class="recommendation-copy"><h3>${escapeHTML(ranking.ambulance.crew)} unit → ${escapeHTML(ranking.hospital.name)}</h3><p>${reason}</p><div class="checks">${checks.map((item) => `<span>✓ ${escapeHTML(item)}</span>`).join("")}</div></div>
         <button class="confirm-button" id="confirm-dispatch">Confirm dispatch</button>
       </div>`;
