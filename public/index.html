@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Smart Ambulance AI-assisted emergency dispatch MVP" />
+    <title>PulseRoute — Smart Ambulance Dispatch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">+</span><span>PulseRoute</span></div>
+        <nav aria-label="Primary navigation">
+          <a class="nav-item active" href="#dispatch"><span>⌁</span> Dispatch</a>
+          <a class="nav-item" href="#fleet"><span>◫</span> Fleet</a>
+          <a class="nav-item" href="#hospitals"><span>✚</span> Hospitals</a>
+          <a class="nav-item" href="#analytics"><span>⌗</span> Analytics</a>
+        </nav>
+        <div class="system-card"><span class="status-dot"></span><div><strong>All systems live</strong><small>Last check 12 sec ago</small></div></div>
+        <div class="operator"><div class="avatar">MA</div><div><strong>Mohd Arif</strong><small>Dispatcher · Shift A</small></div></div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div><p class="eyebrow">Emergency operations</p><h1>Dispatch command center</h1></div>
+          <div class="top-actions"><span class="live-pill"><i></i> Live network</span><button class="icon-button" aria-label="Notifications">◌<b>3</b></button></div>
+        </header>
+
+        <section class="metrics" aria-label="Operational metrics">
+          <article><span class="metric-icon mint">↗</span><div><small>Active incidents</small><strong>08</strong><em>+2 in 30 min</em></div></article>
+          <article><span class="metric-icon blue">⌁</span><div><small>Available units</small><strong>14</strong><em>78% of fleet</em></div></article>
+          <article><span class="metric-icon amber">◷</span><div><small>Avg. response</small><strong>7:42</strong><em>1:18 faster</em></div></article>
+          <article><span class="metric-icon violet">✚</span><div><small>Hospital capacity</small><strong>68%</strong><em>32 beds open</em></div></article>
+        </section>
+
+        <section class="workspace" id="dispatch">
+          <div class="map-panel card">
+            <div class="panel-header"><div><span class="section-label">Live operations map</span><h2>Central Hyderabad</h2></div><div class="segmented"><button class="selected">Traffic</button><button>Units</button></div></div>
+            <div class="map-canvas" aria-label="Stylized operations map">
+              <div class="road road-a"></div><div class="road road-b"></div><div class="road road-c"></div><div class="road road-d"></div>
+              <div class="route"></div>
+              <span class="map-pin incident-pin" style="--x:51%;--y:46%">!</span>
+              <span class="map-pin ambulance-pin" style="--x:34%;--y:67%">+</span>
+              <span class="map-pin unit-pin" style="--x:73%;--y:30%">12</span>
+              <span class="map-pin hospital-pin" style="--x:78%;--y:72%">H</span>
+              <div class="map-legend"><span><i class="red"></i> Incident</span><span><i class="green"></i> Available</span><span><i class="navy"></i> Hospital</span></div>
+            </div>
+            <div class="incident-strip"><div class="priority-badge">P1</div><div><strong>INC-240721 · Suspected cardiac event</strong><small>Road No. 12, Banjara Hills · Reported 2 min ago</small></div><span class="eta">5 min ETA</span></div>
+          </div>
+
+          <form class="intake card" id="incident-form">
+            <div class="panel-header"><div><span class="section-label">New incident</span><h2>AI dispatch assistant</h2></div><span class="ai-chip">✦ AI ready</span></div>
+            <label>Incident location<input name="location" value="Road No. 12, Banjara Hills" required /></label>
+            <label>Emergency summary<textarea name="summary" rows="4" required>Adult with severe chest pain and shortness of breath. Caller reports patient is conscious.</textarea></label>
+            <div class="field-row"><label>Priority<select name="acuity"><option value="critical">Critical — P1</option><option value="high">High — P2</option><option value="medium">Medium — P3</option><option value="low">Low — P4</option></select></label><label>Primary need<select name="need"><option value="cardiac">Cardiac</option><option value="trauma">Trauma</option><option value="stroke">Stroke</option><option value="pediatric">Pediatric</option></select></label></div>
+            <div class="safety-note"><span>i</span><p><strong>Decision support only</strong> AI does not diagnose or dispatch autonomously. Verify all details before confirmation.</p></div>
+            <button class="primary-button" type="submit"><span>✦</span> Analyze & recommend</button>
+          </form>
+        </section>
+
+        <section class="recommendation card" id="recommendation" aria-live="polite">
+          <div class="recommendation-empty"><span>✦</span><div><strong>Ready for incident analysis</strong><p>Submit the intake form to rank available units and hospitals.</p></div></div>
+        </section>
+
+        <section class="resource-grid">
+          <article class="card resource-list" id="fleet"><div class="panel-header"><div><span class="section-label">Fleet status</span><h2>Nearest ambulances</h2></div><a href="#">View all</a></div><div class="resource-row recommended"><span class="unit-icon">+</span><div><strong>AMB-12 <b>Recommended</b></strong><small>ALS · Cardiac & trauma equipped</small></div><div class="resource-meta"><strong>5 min</strong><small>2.4 km</small></div></div><div class="resource-row"><span class="unit-icon muted">+</span><div><strong>AMB-07</strong><small>BLS · Oxygen & trauma equipped</small></div><div class="resource-meta"><strong>8 min</strong><small>3.8 km</small></div></div></article>
+          <article class="card resource-list" id="hospitals"><div class="panel-header"><div><span class="section-label">Destination status</span><h2>Receiving hospitals</h2></div><a href="#">View all</a></div><div class="resource-row recommended"><span class="hospital-icon">H</span><div><strong>CityCare Medical Center <b>Best match</b></strong><small>Cardiac, trauma, stroke · 6 beds</small></div><div class="resource-meta"><strong>9 min</strong><small>4.2 km</small></div></div><div class="resource-row"><span class="hospital-icon muted">H</span><div><strong>St. Anne Emergency</strong><small>Trauma, pediatric · 11 beds</small></div><div class="resource-meta"><strong>12 min</strong><small>5.7 km</small></div></div></article>
+        </section>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
