@@ -13,6 +13,9 @@ An AI-assisted emergency dispatch demonstration that ranks synthetic ambulances 
 - Graceful non-AI fallback
 - Human-in-the-loop confirmation boundary
 - Node test coverage for validation and resource ranking
+- Dispatcher-entered incident processing with an audit event
+- Provider-neutral ambulance GPS, traffic, and hospital-capacity adapters
+- Dry-run dispatch confirmation API that never contacts emergency services
 
 ## Quick start
 
@@ -24,6 +27,13 @@ npm start
 ```
 
 Open `http://localhost:3000`.
+
+## Data modes
+
+- `DATA_MODE=demo` uses synthetic ambulances, hospitals, traffic, and capacity.
+- `DATA_MODE=partner` reads authorized partner endpoints configured through environment variables.
+- Partner responses must return `{ "ambulances": [...] }` and `{ "hospitals": [...] }` using the fields documented by the demo fixtures.
+- Live dispatch is intentionally disabled. Confirmation writes an auditable dry-run intent only.
 
 ## API
 
@@ -42,6 +52,14 @@ Returns service readiness and whether AI is configured.
   "needs": ["cardiac"]
 }
 ```
+
+### `POST /api/dispatch/confirm`
+
+Records a reviewed dry-run dispatch intent. It does not contact an ambulance, hospital, traffic authority, or emergency service.
+
+### `GET /api/audit-events`
+
+Returns recent in-memory analysis and dry-run confirmation events for development review.
 
 ## Stack
 
